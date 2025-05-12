@@ -2,14 +2,16 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { CoreMessage, streamText } from 'ai';
 import { env } from 'cloudflare:workers';
 import { verifySignature, streamResponse } from '@layercode/node-server-sdk';
-import { Context } from 'hono';
+import { Hono } from 'hono';
 
 const sessionMessages = {} as Record<string, CoreMessage[]>;
 
 const SYSTEM_PROMPT = `You are a helpful conversation assistant. You should respond to the user's message in a conversational manner. Your output will be spoken by a TTS model. You should respond in a way that is easy for the TTS model to speak and sound natural.`;
 const WELCOME_MESSAGE = 'Welcome to Layercode. How can I help you today?';
 
-export const onRequestPost = async (c: Context) => {
+const app = new Hono();
+
+app.post('/', async (c) => {
   if (!env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return c.json({ error: 'GOOGLE_GENERATIVE_AI_API_KEY is not set' }, 500);
   }
@@ -68,4 +70,6 @@ export const onRequestPost = async (c: Context) => {
     // Here we return the textStream chunks as SSE messages to Layercode, to be spoken to the user
     await stream.ttsTextStream(textStream);
   });
-};
+});
+
+export { app };

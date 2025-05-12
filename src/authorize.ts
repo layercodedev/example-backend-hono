@@ -1,7 +1,9 @@
-import { Context } from 'hono';
+import { Hono } from 'hono';
 import { env } from 'cloudflare:workers';
 
-export const onRequestPost = async (c: Context) => {
+const app = new Hono();
+
+app.post('/', async (c) => {
   try {
     const response = await fetch("https://api.layercode.com/v1/pipelines/authorize_session", {
       method: 'POST',
@@ -20,4 +22,6 @@ export const onRequestPost = async (c: Context) => {
   } catch (error) {
     return c.json({ error: error });
   }
-};
+});
+
+export { app }
