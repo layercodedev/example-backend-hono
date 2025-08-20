@@ -3,13 +3,13 @@ import { env } from 'cloudflare:workers';
 
 export const onRequestPost = async (c: Context) => {
   try {
-    const response = await fetch("https://api.layercode.com/v1/pipelines/authorize_session", {
+    const response = await fetch('https://api.layercode.com/v1/agents/authorize_session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${env.LAYERCODE_API_KEY}`,
       },
-      body: JSON.stringify({ pipeline_id: "your-pipeline-id", session_id: null }),
+      body: JSON.stringify({ agent_id: 'your-agent-id', session_id: null }),
     });
     if (!response.ok) {
       console.log('response not ok', response.statusText);
