@@ -43,8 +43,11 @@ export const onRequestPost = async (c: Context) => {
       messages,
       stream: true,
     });
+    // Although we await here, we are inside the streamResponse handler, so the LLM response will be immediately streamed to Layercode and spoken to the user
     const assistantText = await stream.ttsWorkersAIStream(llmResponseStream);
+    // Once the whole response has been sent to Layercode, we can save it to the conversation
     if (assistantText) messages.push({ role: 'assistant', content: assistantText });
+    console.log(messages);
     conversations[conversation_id] = messages;
     stream.end();
   });
