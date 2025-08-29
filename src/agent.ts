@@ -48,24 +48,4 @@ export const onRequestPost = async (c: Context) => {
     conversations[conversation_id] = messages;
     stream.end();
   });
-  // return streamResponse(json, async ({ stream }) => {
-  //   const { textStream } = streamText({
-  //     model: google('gemini-2.0-flash-001'),
-  //     system: SYSTEM_PROMPT,
-  //     messages,
-  //     onFinish: async ({ response }) => {
-  //       // After the response has been generated and streamed, finally save it to the message list for this session
-  //       messages.push(...response.messages);
-  //       console.log('Current message history for session', session_id, JSON.stringify(messages, null, 2));
-  //       sessionMessages[session_id] = messages;
-  //       stream.end(); // We must call stream.end() here to tell Layercode that the assistant's response has finished
-  //     },
-  //   });
-  //   // At any time, you can also return json objects, which will be forwarded directly to the client. Use this to create dynamic UI that is synchnised with the voice response.
-  //   stream.data({
-  //     textToBeShown: 'Hello, how can I help you today?',
-  //   });
-  //   // Here we return the textStream chunks as SSE messages to Layercode, to be spoken to the user
-  //   await stream.ttsTextStream(textStream);
-  // });
 };
