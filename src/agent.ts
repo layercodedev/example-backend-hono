@@ -43,74 +43,8 @@ export const onRequestPost = async (c: Context) => {
       messages,
       stream: true,
     });
-
-    const decoder = new TextDecoder();
-    let buffer = '';
-    let assistantText = '';
-    let doneTokenSeen = false;
-
-    const handleLine = async (line: string) => {
-      let s = line.trim();
-      if (!s) return;
-      // Strip SSE data prefix if present
-      if (s.startsWith('data:')) s = s.slice(5).trim();
-      if (!s) return;
-      // Stop when the stream signals completion
-      if (s === '[DONE]') {
-        doneTokenSeen = true;
-        return;
-      }
-      // Attempt to parse only JSON payloads
-      try {
-        const msg = JSON.parse(s);
-        const chunk = typeof msg?.response === 'string' ? msg.response : '';
-        if (chunk) {
-          stream.tts(chunk);
-          assistantText += chunk;
-        }
-      } catch {
-        // ignore non-JSON or partial lines
-      }
-    };
-
-    const reader = typeof llmResponseStream?.getReader === 'function' ? llmResponseStream.getReader() : null;
-
-    if (reader) {
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const l of lines) {
-          await handleLine(l);
-          if (doneTokenSeen) break;
-        }
-        if (doneTokenSeen) break;
-      }
-      if (buffer && !doneTokenSeen) {
-        await handleLine(buffer);
-      }
-    } else if (llmResponseStream && typeof llmResponseStream[Symbol.asyncIterator] === 'function') {
-      for await (const chunk of llmResponseStream as AsyncIterable<any>) {
-        const piece = typeof chunk === 'string' ? chunk : decoder.decode(chunk, { stream: true });
-        buffer += piece;
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const l of lines) {
-          await handleLine(l);
-          if (doneTokenSeen) break;
-        }
-        if (doneTokenSeen) break;
-      }
-      if (buffer && !doneTokenSeen) {
-        await handleLine(buffer);
-      }
-    }
-
-    if (assistantText) {
-      messages.push({ role: 'assistant', content: assistantText });
-    }
+    const assistantText = await stream.ttsWorkersAIStream(llmResponseStream);
+    if (assistantText) messages.push({ role: 'assistant', content: assistantText });
     conversations[conversation_id] = messages;
     stream.end();
   });
