@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
-import { onRequestPost as onRequestPostAgent } from './agent';
-import { onRequestPost as onRequestPostAuthorize } from './authorize';
+import { app as agentApp } from './agent';
+import { app as authorizeApp } from './authorize';
 import { cors } from 'hono/cors'
 
 const app = new Hono();
 
-app.post('/agent', onRequestPostAgent);
+app.route('/agent', agentApp);
 
 app.use('/authorize', cors())
-app.post('/authorize', onRequestPostAuthorize);
+app.route('/authorize', authorizeApp);
 
 
 export default app;
