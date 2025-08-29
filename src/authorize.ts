@@ -9,7 +9,7 @@ export const onRequestPost = async (c: Context) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${env.LAYERCODE_API_KEY}`,
       },
-      body: JSON.stringify({ agent_id: 'your-agent-id', session_id: null }),
+      body: JSON.stringify({ agent_id: 'your-agent-id', conversation_id: null }),
     });
     if (!response.ok) {
       console.log('response not ok', response.statusText);

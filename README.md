@@ -92,7 +92,7 @@ data: {"type":"response.end","turn_id":"turn-0001"}
 
 ### POST `/authorize`
 
-It receives the frontend's request then, calls the Layercode authorization API using your secret API key, and finally returns the `client_session_key` (and optionally a `session_id`) to the frontend. This key is required for the frontend to establish a secure WebSocket connection to Layercode.
+It receives the frontend's request then, calls the Layercode authorization API using your secret API key, and finally returns the `client_session_key` (and optionally a `conversation_id`) to the frontend. This key is required for the frontend to establish a secure WebSocket connection to Layercode.
 
 ## License
 
