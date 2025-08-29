@@ -3,7 +3,7 @@ import { env } from 'cloudflare:workers';
 
 export const onRequestPost = async (c: Context) => {
   try {
-    const response = await fetch('https://api.layercode.com/v1/agents/authorize_session', {
+    const response = await fetch('https://api.layercode.com/v1/agents/web/authorize_session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
